@@ -246,6 +246,8 @@ Runops_Trace_perl (pTHX) {
     case ARITY_LIST:
       list_mark = PL_stack_base + *(PL_markstack_ptr-1) + 1;
       /* repeat stack from the op's mark to SP just before we started pushing */
+      if( orig_sp -list_mark < 0 ) break;
+
       EXTEND(SP, orig_sp - list_mark);
       while ( list_mark <= orig_sp ) {
         XPUSHREF(*list_mark++);

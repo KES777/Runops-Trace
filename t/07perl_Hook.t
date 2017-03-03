@@ -15,7 +15,7 @@ Runops::Trace::set_tracer(sub {
 
 	$called++;
 
-	if ( $op->name eq 'refgen' and @refgen_args < 2 ) {
+	if ( ($op->name eq 'refgen' || $op->name eq 'srefgen') and @refgen_args < 2 ) {
 		push @refgen_args, [ @args ];
 	} elsif ( $op->name eq 'aassign' ) {
 		push @aassign_args, [ @args ];
@@ -35,12 +35,13 @@ Runops::Trace::enable_tracing();
 ++$i;
 my $j = $i + 42;
 
+my @padav;
 my $y = 101;
 my ( $x, @refs ) = \( $y, [qw/dancing hippies/], 33, \&foo );
 
 $i ? foo() : bar();
 
-if ( foo() || 1 ) {
+if ( foo() && bar() || foo() ) {
 	$j = "" . $i;
 }
 
@@ -63,7 +64,7 @@ foreach my $opname (qw(
 	preinc add
 	entersub leavesub
 	refgen sassign aassign
-	padsv padav gv
+	padsv padav padrange gv
 	cond_expr and or
 	const
 	anonlist
